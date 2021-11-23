@@ -1,0 +1,7 @@
+node_modules
+data/ap_scraper.py
+dist
+.vscode
+.DS_Store
+
+

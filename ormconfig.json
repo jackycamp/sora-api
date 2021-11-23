@@ -1,0 +1,11 @@
+{
+    "type": "mysql",
+    "host": "localhost",
+    "port": 3306,
+    "username": "dev",
+    "password": "password",
+    "database": "sora",
+    "entities": ["src/entity/*.ts"],
+    "logging": true,
+    "synchronize": true
+  }
