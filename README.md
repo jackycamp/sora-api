@@ -41,9 +41,9 @@ To verify your api is working correctly, open a browser window and navigate to: 
     - Create Media table that looks like:
     - Table Name: media with columns:
         - id: INT, PK, NN, AI
-        - title: VARCHAR(255)
-        - year: INT
-        - type: VARCHAR(255)
+        - title: VARCHAR(255), NN
+        - year: INT, NN
+        - type: VARCHAR(255), NN
     - Note, once migrations are setup, this will be automated
 - Seed the database
 ```bash
