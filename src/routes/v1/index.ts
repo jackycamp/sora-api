@@ -1,5 +1,7 @@
 import express from 'express';
 import MediaRouter from './media';
+import UserRouter from './user';
+import AuthRouter from './auth';
 
 const router = express.Router();
 
@@ -8,5 +10,7 @@ router.get('/', (_, res) => {
 });
 
 router.use('/media', MediaRouter);
+router.use('/user', UserRouter);
+router.use('/login', AuthRouter);
 
 export default router;
