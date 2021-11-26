@@ -11,6 +11,6 @@ router.get('/', (_, res) => {
 
 router.use('/media', MediaRouter);
 router.use('/user', UserRouter);
-router.use('/login', AuthRouter);
+router.use('/auth', AuthRouter);
 
 export default router;

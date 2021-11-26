@@ -8,4 +8,8 @@ const router = express.Router();
 router.get('/', [checkToken, checkRole(['superadmin', 'admin'])], UserController.listAll);
 router.get('/:id', [checkToken, checkRole(['superadmin', 'admin'])], UserController.getUserById);
 
+router.post('/register', UserController.createUser);
+router.post('/:id', [checkToken, checkRole(['superadmin'])], UserController.modifyUser);
+router.delete('/:id', [checkToken, checkRole(['superadmin'])], UserController.deleteUser);
+
 export default router;

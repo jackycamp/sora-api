@@ -1,8 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { Length, IsNotEmpty } from 'class-validator';
-import * as bcrypt from 'bcryptjs';
+import { Entity, Column, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { Length } from 'class-validator';
+import bcrypt from 'bcryptjs';
 
 @Entity()
+@Unique(['username'])
 export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -12,12 +13,11 @@ export class User {
 	username: string;
 
 	@Column()
-	@Length(4, 24)
+	@Length(4, 100)
 	password: string;
 
-	@Column()
-	@IsNotEmpty()
-	role: string;
+	@Column({ default: 'user' })
+	role: string
 
 	hashPassword () {
 		this.password = bcrypt.hashSync(this.password, 8);

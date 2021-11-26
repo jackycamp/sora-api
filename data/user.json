@@ -1,0 +1,22 @@
+[
+	{
+		"username": "superadmin",
+		"password": "$2a$08$fmzjUdF9S2p6ilhJry/6FecSGHXOwQglhCZKiIYKIrqgFoPTbsvMi",
+		"role": "superadmin"
+	},
+	{
+		"username": "admin",
+		"password": "$2a$08$fmzjUdF9S2p6ilhJry/6FecSGHXOwQglhCZKiIYKIrqgFoPTbsvMi",
+		"role": "admin"
+	},
+	{
+		"username": "mod",
+		"password": "$2a$08$fmzjUdF9S2p6ilhJry/6FecSGHXOwQglhCZKiIYKIrqgFoPTbsvMi",
+		"role": "mod"
+	},
+	{
+		"username": "user",
+		"password": "$2a$08$fmzjUdF9S2p6ilhJry/6FecSGHXOwQglhCZKiIYKIrqgFoPTbsvMi",
+		"role": "user"
+	}
+]
