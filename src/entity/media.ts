@@ -26,7 +26,7 @@ const findMany = async (params: any) => {
 	const connection = getConnection();
 	const repository = connection.getRepository(Media);
 
-	const { title, year, type, titleLike } = params;
+	const { title, year, type, titleLike, limit } = params;
 
 	// Conditionally adding parameters to the query
 	// allows for more flexible querying.
@@ -39,7 +39,8 @@ const findMany = async (params: any) => {
 				...(year && { year: year }),
 				...(type && { type: type }),
 			}
-		]
+		],
+		take: limit || 100
 	});
 	return data;
 };
