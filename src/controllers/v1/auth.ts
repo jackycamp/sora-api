@@ -82,7 +82,38 @@ const changePassword = async (req: Request, res: Response) => {
 	res.status(200).send('Successfully changed password');
 };
 
+const register = async (req: Request, res: Response) => {
+	// Get new user details from body
+	const { username, password } = req.body;
+	const newUser = new User();
+	newUser.username = username;
+	newUser.password = password;
+
+	// Confirm new user details meet requirements
+	const errors = await validate(newUser);
+	if (errors.length > 0) {
+		res.status(400).send(errors);
+		return;
+	}
+
+	// Hash new user's password
+	newUser.hashPassword();
+
+	// Get user table and try to save. If it fails, username is taken.
+	const repository = getRepository(User);
+	try {
+		await repository.save(newUser);
+	} catch (e) {
+		res.status(409).send('Username already taken');
+		return;
+	}
+
+	// User has successfully been created if we reach here
+	res.status(201).send('User successfully created');
+};
+
 export default {
 	login,
-	changePassword
+	changePassword,
+	register
 };
