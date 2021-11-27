@@ -13,33 +13,31 @@ const show = async (req: Request, res: Response) => {
 	res.json(data);
 };
 
-// Preventing ability to create, update, and destroy for now.
+// TODO: Tie in user roles to the following methods
 
-// const create = async (req: Request, res: Response) => {
-// 	const connection = getConnection();
-// 	const repository = connection.getRepository(Media);
-// 	const data = await repository.find();
-// 	res.json(data);
-// };
+const create = async (req: Request, res: Response) => {
+	const params = req.query;
+	const resp = await Media.addSingle(params);
+	res.json(resp);
+};
 
-// const update = async (req: Request, res: Response) => {
-// 	const connection = getConnection();
-// 	const repository = connection.getRepository(Media);
-// 	const data = await repository.find();
-// 	res.json(data);
-// };
+const update = async (req: Request, res: Response) => {
+	const id = req.params.id;
+	const params = req.query;
+	const resp = await Media.updateSingle(id, params);
+	res.json(resp);
+};
 
-// const destroy = async (req: Request, res: Response) => {
-// 	const connection = getConnection();
-// 	const repository = connection.getRepository(Media);
-// 	const data = await repository.find();
-// 	res.json(data);
-// };
+const destroy = async (req: Request, res: Response) => {
+	const id = req.params.id;
+	const resp = await Media.removeSingle(id);
+	res.json(resp);
+};
 
 export default {
 	index,
 	show,
-	// create,
-	// update,
-	// destroy
+	create,
+	update,
+	destroy
 };
