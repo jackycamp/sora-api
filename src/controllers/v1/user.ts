@@ -1,94 +1,30 @@
 import { Request, Response } from 'express';
-import { User } from '../../entity/user';
-import { getRepository } from 'typeorm';
-import { validate } from 'class-validator';
+import User from '../../entity/user';
 
-const listAll = async (req: Request, res: Response) => {
-	// Get all users from the user table
-	const repository = getRepository(User);
-	const users = await repository.find({ select: ['id', 'username', 'role'] });
-
-	// Send users object
-	res.send(users);
+const index = async (req: Request, res: Response) => {
+	const users = await User.listAll();
+	res.json(users);
 };
 
-const getUserById = async (req: Request, res: Response) => {
-	// Get Id from URL
+const show = async (req: Request, res: Response) => {
 	const id: string | number = req.params.id;
-
-	// Try to find Id in user table
-	const repository = getRepository(User);
-	try {
-		const user = await repository.findOneOrFail(id, { select: ['id', 'username', 'role'] });
-		res.send(user);
-	} catch (error) {
-		// User was not found
-		res.status(404).send('User not found');
-	}
+	const data = await User.getById(id);
+	res.json(data);
 };
 
-const modifyUser = async (req: Request, res: Response) => {
-	// Grab user to edit from URL
-	const userId = req.params.id;
-
-	// Grab requested new values from body
-	const { username, role } = req.body;
-
-	// Try finding user in table
-	const repository = getRepository(User);
-	let user: User;
-	try {
-		user = await repository.findOneOrFail(userId);
-	} catch (error) {
-		res.status(404).send('User not found');
-		return;
-	}
-
-	// Confirm new details meet requirements
-	user.username = username;
-	user.role = role;
-	const errors = await validate(user);
-	if (errors.length > 0) {
-		res.status(400).send(errors);
-		return;
-	}
-
-	// Try saving updates. If it fails, new username is already taken
-	try {
-		await repository.save(user);
-	} catch (e) {
-		res.status(409).send('Username is already taken');
-		return;
-	}
-
-	// User has been successfully modified
-	res.status(200).send('User succesfully modified');
+const update = async (req: Request, res: Response) => {
+	const data = await User.modifyById(req.params.id, req.body);
+	res.json(data);
 };
 
-const deleteUser = async (req: Request, res: Response) => {
-	// Get user to delete from URL
-	const userId = req.params.id;
-
-	// Find user in table
-	const repository = getRepository(User);
-	let user: User;
-	try {
-		user = await repository.findOneOrFail(userId);
-	} catch (e) {
-		res.status(404).send('User not found');
-		return;
-	}
-
-	// Successfully found user not delete them
-	repository.delete(user);
-
-	// User successfully deleted
-	res.status(200).send('User has been deleted');
+const destroy = async (req: Request, res: Response) => {
+	const data = await User.deleteById(req.params.id);
+	res.json(data);
 };
 
 export default {
-	listAll,
-	getUserById,
-	modifyUser,
-	deleteUser
+	index,
+	show,
+	update,
+	destroy
 };

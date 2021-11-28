@@ -3,7 +3,7 @@ import userData from '../../data/user.json';
 import db from './db';
 
 import Media from '../entity/media';
-import { User } from '../entity/user';
+import User from '../entity/user';
 
 const seedMedia = async () => {
 	const connection = await db.connectToDatabase();
@@ -20,7 +20,7 @@ const seedUser = async () => {
 	const connection = await db.connectToDatabase();
 	connection?.createQueryBuilder()
 		.insert()
-		.into(User)
+		.into(User.Entity)
 		.values(
 			userData.map((user) => ({ ...user }))
 		)

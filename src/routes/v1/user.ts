@@ -5,10 +5,10 @@ import { checkRole } from '../../middlewares/v1/checkRole';
 
 const router = express.Router();
 
-router.get('/', [checkToken, checkRole(['superadmin', 'admin'])], UserController.listAll);
-router.get('/:id', [checkToken, checkRole(['superadmin', 'admin'])], UserController.getUserById);
+router.get('/', [checkToken, checkRole(['superadmin', 'admin'])], UserController.index);
+router.get('/:id', [checkToken, checkRole(['superadmin', 'admin'])], UserController.show);
 
-router.post('/:id', [checkToken, checkRole(['superadmin'])], UserController.modifyUser);
-router.delete('/:id', [checkToken, checkRole(['superadmin'])], UserController.deleteUser);
+router.put('/:id', [checkToken, checkRole(['superadmin'])], UserController.update);
+router.delete('/:id', [checkToken, checkRole(['superadmin'])], UserController.destroy);
 
 export default router;
