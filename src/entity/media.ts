@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, getConnection, Like } from 'typeorm';
+import { IsIn, Min, validate } from 'class-validator';
 
 @Entity()
 class Media {
@@ -9,10 +10,26 @@ class Media {
     title: string;
 
     @Column()
+	@IsIn(['Movie', 'TV', 'Web', 'OVA', 'DVD Special', 'Music Video', 'Other'])
     type: string;
 
     @Column()
+	@Min(1900)
     year: number;
+};
+
+// Used to validate new or updated media objects
+const validateMedia = async (title: string, year: string, type: string) => {
+	let invalid = false;
+	const temp = new Media();
+	temp.title = title;
+	temp.year = parseInt(year);
+	temp.type = type;
+	const errors = await validate(temp);
+	if (errors.length > 0) {
+		invalid = true;
+	}
+	return invalid;
 };
 
 // Note, you may notice the getConnection() happening inside of the body of the
@@ -52,17 +69,14 @@ const findSingle = async (id: number | string) => {
 	return data;
 };
 
-// TODO: Perform validation on title and year
 const addSingle = async (params: any) => {
 	try {
 		const connection = getConnection();
+		const repository = connection.getRepository(Media);
 		const { title, year, type } = params;
-		// Input validation for the type
-		if (type !== 'Movie' && type !== 'TV' && type !== 'Web' && type !== 'OVA' && type !== 'DVD Special' && type !== 'Music Video' && type !== 'Other') {
-			throw new Error('Invalid type');
-		}
-		if (parseInt(year) < 1900) {
-			throw new Error('Invalid year');
+		// Media validation
+		if (await validateMedia(title, year, type)) {
+			throw new Error('Invalid parameters');
 		}
 		await connection.createQueryBuilder()
 			.insert()
@@ -71,66 +85,86 @@ const addSingle = async (params: any) => {
 				title: title, year: year, type: type
 			})
 			.execute();
-		return 'Entry added';
-	} catch (error) {
-		return 'Invalid parameters, failed to add entry';
+		const data = await repository.createQueryBuilder('media').where('media.title = :title', { title: title }).getOne();
+		const resp = {
+			message: 'Entry updated',
+			data: data
+		};
+		return resp;
+	} catch (e) {
+		// return 'Invalid parameters, failed to add entry';
+		const resp = {
+			message: 'Failed to add entry',
+			error: (e as Error).message
+		};
+		return resp;
 	}
 };
 
 const updateSingle = async (id: number | string, params: any) => {
 	try {
 		const connection = getConnection();
+		const repository = connection.getRepository(Media);
 		const { title, year, type } = params;
-		// Checks if the user provided a data type before changing it.
-		// This allows for changing one column without having to write to other columns
-		if (title) {
-			await connection.createQueryBuilder()
-				.update('media')
-				.set({
-					title: title
-				}).where('media.id = :id', { id: id })
-				.execute();
+		let data = await repository.createQueryBuilder('media').where('media.id = :id', { id: id }).getOne();
+		// Id validation
+		if (!data) {
+			throw new Error('Entry does not exist');
 		}
-		if (year) {
-			if (parseInt(year) < 1900) {
-				throw new Error('Invalid year');
-			}
-			await connection.createQueryBuilder()
-				.update('media')
-				.set({
-					year: year
-				}).where('media.id = :id', { id: id })
-				.execute();
+		// Media validation
+		if (await validateMedia(title, year, type)) {
+			throw new Error('Invalid parameters');
 		}
-		if (type) {
-			// Input validation for the type
-			if (type !== 'Movie' && type !== 'TV' && type !== 'Web' && type !== 'OVA' && type !== 'DVD Special' && type !== 'Music Video' && type !== 'Other') {
-				throw new Error('Invalid type');
-			}
-			await connection.createQueryBuilder()
-				.update('media')
-				.set({
-					type: type
-				}).where('media.id = :id', { id: id })
-				.execute();
-		}
-		return 'Entry updated';
-	} catch (error) {
-		return 'Entry failed to update';
+		await connection.createQueryBuilder()
+			.update('media')
+			.set({
+				...(title && { title: title }),
+				...(year && { year: year }),
+				...(type && { type: type })
+			}).where('media.id = :id', { id: id })
+			.execute();
+		data = await repository.createQueryBuilder('media').where('media.id = :id', { id: id }).getOne();
+		const resp = {
+			message: 'Entry updated',
+			data: data
+		};
+		return resp;
+	} catch (e) {
+		// return 'Entry failed to update';
+		const resp = {
+			message: 'Entry failed to update',
+			error: (e as Error).message
+		};
+		return resp;
 	}
 };
 
 const removeSingle = async (id: number | string) => {
 	try {
 		const connection = getConnection();
+		const repository = connection.getRepository(Media);
+		const data = await repository.createQueryBuilder('media').where('media.id = :id', { id: id }).getOne();
+		// Id Validation
+		if (!data) {
+			throw new Error('Entry does not exist');
+		}
 		await connection.createQueryBuilder()
 			.delete()
 			.from('media')
 			.where('media.id = :id', { id: id })
 			.execute();
-		return 'Entry deleted';
-	} catch (error) {
-		return 'Entry failed to delete';
+		const resp = {
+			message: 'Entry deleted',
+			data: data
+		};
+		return resp;
+	} catch (e) {
+		// return 'Entry failed to delete';
+		const resp = {
+			message: 'Entry failed to delete',
+			error: (e as Error).message
+		};
+		return resp;
 	}
 };
 

@@ -13,7 +13,7 @@ const show = async (req: Request, res: Response) => {
 	res.json(data);
 };
 
-// TODO: Tie in user roles to the following methods
+// TODO: Implement status codes into responses
 
 const create = async (req: Request, res: Response) => {
 	const params = req.query;
