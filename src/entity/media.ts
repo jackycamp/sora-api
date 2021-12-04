@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, getConnection, Like } from 'typeorm';
 import { IsIn, Min, validate } from 'class-validator';
+import { raw } from 'express';
 
 @Entity()
 class Media {
@@ -78,7 +79,7 @@ const addSingle = async (params: any) => {
 		if (await validateMedia(title, year, type)) {
 			throw new Error('Invalid parameters');
 		}
-		await connection.createQueryBuilder()
+		const insert = await connection.createQueryBuilder()
 			.insert()
 			.into('media')
 			.values({
@@ -86,16 +87,13 @@ const addSingle = async (params: any) => {
 			})
 			.execute();
 
-		// TODO: Rather than querying for the newly created media using the title
-		// we should query by id. You should be able to obtain this using: raw.insertId
-		const data = await repository.createQueryBuilder('media').where('media.title = :title', { title: title }).getOne();
+		const data = await repository.createQueryBuilder('media').where('media.id = :id', { id: insert.raw.insertId }).getOne();
 		const resp = {
 			message: 'Entry created',
 			data: data
 		};
 		return resp;
 	} catch (e) {
-		// return 'Invalid parameters, failed to add entry';
 		const resp = {
 			message: 'Failed to add entry',
 			error: (e as Error).message
@@ -133,7 +131,6 @@ const updateSingle = async (id: number | string, params: any) => {
 		};
 		return resp;
 	} catch (e) {
-		// return 'Entry failed to update';
 		const resp = {
 			message: 'Entry failed to update',
 			error: (e as Error).message
@@ -162,7 +159,6 @@ const removeSingle = async (id: number | string) => {
 		};
 		return resp;
 	} catch (e) {
-		// return 'Entry failed to delete';
 		const resp = {
 			message: 'Entry failed to delete',
 			error: (e as Error).message
