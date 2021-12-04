@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, getConnection, Like } from 'typeorm';
 import { IsIn, Min, validate } from 'class-validator';
-import { raw } from 'express';
 
 @Entity()
 class Media {
