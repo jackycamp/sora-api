@@ -16,7 +16,7 @@ const show = async (req: Request, res: Response) => {
 // TODO: Implement status codes into responses
 
 const create = async (req: Request, res: Response) => {
-	const params = req.query;
+	const params = req.body;
 	const resp = await Media.addSingle(params);
 	res.json(resp);
 };

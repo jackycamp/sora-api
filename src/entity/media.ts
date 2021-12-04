@@ -10,7 +10,7 @@ class Media {
     title: string;
 
     @Column()
-	@IsIn(['Movie', 'TV', 'Web', 'OVA', 'DVD Special', 'Music Video', 'Other'])
+	@IsIn(['Movie', 'TV', 'Web', 'OVA', 'DVD Special', 'Music Video', 'Other', 'Anime', 'Manga'])
     type: string;
 
     @Column()
@@ -85,9 +85,12 @@ const addSingle = async (params: any) => {
 				title: title, year: year, type: type
 			})
 			.execute();
+
+		// TODO: Rather than querying for the newly created media using the title
+		// we should query by id. You should be able to obtain this using: raw.insertId
 		const data = await repository.createQueryBuilder('media').where('media.title = :title', { title: title }).getOne();
 		const resp = {
-			message: 'Entry updated',
+			message: 'Entry created',
 			data: data
 		};
 		return resp;
