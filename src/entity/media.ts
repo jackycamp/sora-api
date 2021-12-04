@@ -94,7 +94,6 @@ const addSingle = async (params: any) => {
 		};
 		return resp;
 	} catch (e) {
-		// return 'Invalid parameters, failed to add entry';
 		const resp = {
 			message: 'Failed to add entry',
 			error: (e as Error).message
@@ -132,7 +131,6 @@ const updateSingle = async (id: number | string, params: any) => {
 		};
 		return resp;
 	} catch (e) {
-		// return 'Entry failed to update';
 		const resp = {
 			message: 'Entry failed to update',
 			error: (e as Error).message
@@ -161,7 +159,6 @@ const removeSingle = async (id: number | string) => {
 		};
 		return resp;
 	} catch (e) {
-		// return 'Entry failed to delete';
 		const resp = {
 			message: 'Entry failed to delete',
 			error: (e as Error).message
