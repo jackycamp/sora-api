@@ -171,11 +171,19 @@ const removeSingle = async (id: number | string) => {
 	}
 };
 
+/**
+ * Export all media records and dumps them in a file.
+ */
+const exportToFile = (): void => {
+
+};
+
 export default {
 	Entity: Media,
 	findMany,
 	findSingle,
 	addSingle,
 	updateSingle,
-	removeSingle
+	removeSingle,
+	exportToFile
 };
